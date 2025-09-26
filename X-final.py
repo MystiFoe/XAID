@@ -18,7 +18,7 @@ X_USERNAME = os.getenv("X_USERNAME")
 X_PASSWORD = os.getenv("X_PASSWORD")
 
 # ✅ User data directory for persistent session
-USER_DATA_DIR = "/tmp/x_automation/user_data"
+USER_DATA_DIR = os.path.expanduser("~/x_automation/user_data")
 
 # ✅ Load configuration from config.json
 def load_config():
@@ -787,9 +787,9 @@ async def main():
                 "--disable-dev-shm-usage",
                 "--disable-gpu",
                 "--no-first-run",
-                "--no-zygote",
-                "--single-process",
-                "--disable-extensions"
+                "--disable-extensions",
+                "--disable-background-timer-throttling",
+                "--disable-renderer-backgrounding"
             ]
         )
         

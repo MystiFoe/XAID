@@ -1,0 +1,27 @@
+FROM python:3.11-slim
+
+# Install comprehensive server dependencies
+RUN apt-get update && apt-get install -y \
+    wget curl gnupg2 ca-certificates \
+    fonts-liberation xvfb \
+    libx11-6 libxcomposite1 libxcursor1 \
+    libxdamage1 libxi6 libxtst6 libnss3 \
+    libcups2 libxss1 libxrandr2 libasound2 \
+    libgtk-3-0 libgbm-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN playwright install chromium && playwright install-deps
+
+COPY . .
+RUN mkdir -p /app/user_data /app/logs /app/data /app/screenshots
+
+ENV PYTHONUNBUFFERED=1
+ENV DISPLAY=:99
+EXPOSE 8080
+
+# Start virtual display and application
+CMD ["sh", "-c", "Xvfb :99 -screen 0 1920x1080x24 & streamlit run streamlit_app.py --server.port=8080 --server.address=0.0.0.0"]
